@@ -19,6 +19,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "RKRequest.h"
 
 @protocol RKRequestQueueDelegate;
