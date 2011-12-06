@@ -20,6 +20,7 @@
 
 #import "RKManagedObjectMappingOperation.h"
 #import "RKManagedObjectMapping.h"
+#import "RKDynamicObjectMapping.h"
 #import "NSManagedObject+ActiveRecord.h"
 #import "RKLog.h"
 
@@ -38,7 +39,7 @@
  at the right moments
  */
 + (RKObjectMappingOperation*)mappingOperationFromObject:(id)sourceObject toObject:(id)destinationObject withMapping:(RKObjectMapping*)objectMapping {
-    if ([objectMapping isKindOfClass:[RKManagedObjectMapping class]]) {
+    if ([objectMapping isKindOfClass:[RKManagedObjectMapping class]] || [objectMapping isKindOfClass:[RKDynamicObjectMapping class]]) {
         return [[[RKManagedObjectMappingOperation alloc] initWithSourceObject:sourceObject destinationObject:destinationObject mapping:objectMapping] autorelease];
     }
         
