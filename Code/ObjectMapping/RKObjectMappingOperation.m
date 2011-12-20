@@ -35,6 +35,13 @@
 // Temporary home for object equivalancy tests
 BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue);
 BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
+    if (sourceValue == nil) {
+        if (destinationValue == nil)
+            return YES;
+        else
+            return NO;
+    } else if (destinationValue == nil)
+        return NO;
     NSCAssert(sourceValue, @"Expected sourceValue not to be nil");
     NSCAssert(destinationValue, @"Expected destinationValue not to be nil");
     
