@@ -77,8 +77,12 @@ BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
 @synthesize delegate = _delegate;
 @synthesize queue = _queue;
 
-+ (RKObjectMappingOperation*)mappingOperationFromObject:(id)sourceObject toObject:(id)destinationObject withMapping:(id<RKObjectMappingDefinition>)objectMapping {
-    return [[[self alloc] initWithSourceObject:sourceObject destinationObject:destinationObject mapping:objectMapping] autorelease];
++ (id)mappingOperationFromObject:(id)sourceObject toObject:(id)destinationObject withMapping:(id<RKObjectMappingDefinition>)objectMapping {
+    // Check for availability of ManagedObjectMappingOperation. Better approach for handling?
+    Class targetClass = NSClassFromString(@"RKManagedObjectMappingOperation");
+    if (targetClass == nil) targetClass = [RKObjectMappingOperation class];
+    
+    return [[[targetClass alloc] initWithSourceObject:sourceObject destinationObject:destinationObject mapping:objectMapping] autorelease];
 }
 
 - (id)initWithSourceObject:(id)sourceObject destinationObject:(id)destinationObject mapping:(id<RKObjectMappingDefinition>)objectMapping {
@@ -132,6 +136,7 @@ BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
 - (id)transformValue:(id)value atKeyPath:keyPath toType:(Class)destinationType {
     RKLogTrace(@"Found transformable value at keyPath '%@'. Transforming from type '%@' to '%@'", keyPath, NSStringFromClass([value class]), NSStringFromClass(destinationType));
     Class sourceType = [value class];
+    Class orderedSetClass = NSClassFromString(@"NSOrderedSet");
     
     if ([sourceType isSubclassOfClass:[NSString class]]) {
         if ([destinationType isSubclassOfClass:[NSDate class]]) {
@@ -163,10 +168,19 @@ BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
         if ([destinationType isSubclassOfClass:[NSArray class]]) {
             return [(NSSet*)value allObjects];
         }
+    } else if (orderedSetClass && [sourceType isSubclassOfClass:orderedSetClass]) {
+        // OrderedSet -> Array
+        if ([destinationType isSubclassOfClass:[NSArray class]]) {
+            return [(NSOrderedSet*)value array];
+        }
     } else if ([sourceType isSubclassOfClass:[NSArray class]]) {
         // Array -> Set
         if ([destinationType isSubclassOfClass:[NSSet class]]) {
             return [NSSet setWithArray:value];
+        }
+        // Array -> OrderedSet
+        if (orderedSetClass && [destinationType isSubclassOfClass:orderedSetClass]) {
+            return [orderedSetClass orderedSetWithArray:value];
         }
     } else if ([sourceType isSubclassOfClass:[NSNumber class]] && [destinationType isSubclassOfClass:[NSDate class]]) {
         // Number -> Date

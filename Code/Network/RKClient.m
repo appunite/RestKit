@@ -25,6 +25,7 @@
 #import "RKLog.h"
 #import "RKPathMatcher.h"
 #import "NSString+RestKit.h"
+#import "RKDirectory.h"
 
 // Set Logging Component
 #undef RKLogComponent
@@ -89,6 +90,7 @@ NSString *RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPar
 @synthesize requestCache = _requestCache;
 @synthesize cachePolicy = _cachePolicy;
 @synthesize requestQueue = _requestQueue;
+@synthesize timeoutInterval = _timeoutInterval;
 
 + (RKClient *)sharedClient {
 	return sharedClient;
@@ -181,7 +183,7 @@ NSString *RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPar
 - (NSString *)cachePath {
     NSString *cacheDirForClient = [NSString stringWithFormat:@"RKClientRequestCache-%@",
                                    [[NSURL URLWithString:self.baseURL] host]];
-    NSString *cachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+    NSString *cachePath = [[RKDirectory cachesDirectory]
                            stringByAppendingPathComponent:cacheDirForClient];
     return cachePath;
 }
@@ -220,6 +222,12 @@ NSString *RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPar
     request.cache = self.requestCache;
     request.queue = self.requestQueue;
     request.reachabilityObserver = self.reachabilityObserver;
+    
+    // If a timeoutInterval was set on the client, we'll pass it on to the request.
+    // Otherwise, we'll let the request default to its own timeout interval.
+    if (self.timeoutInterval) {
+        request.timeoutInterval = self.timeoutInterval;
+    }
     
     // OAuth 1 Parameters
     request.OAuth1AccessToken = self.OAuth1AccessToken;
