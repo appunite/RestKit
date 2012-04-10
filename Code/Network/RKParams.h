@@ -60,7 +60,6 @@
 /**
  Sets the value for a named parameter
  */
-- (RKParamsAttachment *)setValue:(id <NSObject>)value forParam:(NSString *)param;
 
 /**
  Get the dictionary of the params which are:
