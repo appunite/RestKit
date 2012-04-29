@@ -40,18 +40,24 @@
 }
 
 - (id)initWithBaseURLString:(NSString*)baseURLString resourcePath:(NSString*)resourcePath queryParams:(NSDictionary*)queryParams {
-	NSString* resourcePathWithQueryString = RKPathAppendQueryParams(resourcePath, queryParams);
-	NSURL *baseURL = [NSURL URLWithString:baseURLString];
-	NSString* completePath = [[baseURL path] stringByAppendingPathComponent:resourcePathWithQueryString];
-    // Preserve trailing slash in resourcePath
-    if (resourcePath && [resourcePath characterAtIndex:[resourcePath length] - 1] == '/') {
-        completePath = [completePath stringByAppendingString:@"/"];
+    NSString* resourcePathWithQueryString = RKPathAppendQueryParams(resourcePath, queryParams);
+	NSURL* completeURL = nil;
+    if (baseURLString) {
+        
+        NSURL *baseURL = [NSURL URLWithString:baseURLString];
+        NSString* completePath = [[baseURL path] stringByAppendingPathComponent:resourcePathWithQueryString];
+        // Preserve trailing slash in resourcePath
+        if (resourcePath && [resourcePath characterAtIndex:[resourcePath length] - 1] == '/') {
+            completePath = [completePath stringByAppendingString:@"/"];
+        }
+        completeURL = [NSURL URLWithString:completePath relativeToURL:baseURL];
+        if (!completeURL) {
+            [self release];
+            return nil;
+        }
+    } else {
+        completeURL = [NSURL URLWithString:resourcePath];
     }
-	NSURL* completeURL = [NSURL URLWithString:completePath relativeToURL:baseURL];
-	if (!completeURL) {
-		[self release];
-		return nil;
-	}
 	
 	// You can't safely use initWithString:relativeToURL: in a NSURL subclass, see http://www.openradar.me/9729706
 	self = [self initWithString:[completeURL absoluteString]];

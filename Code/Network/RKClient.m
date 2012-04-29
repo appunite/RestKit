@@ -149,6 +149,9 @@ NSString *RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPar
             
             // Initialize Logging as soon as a client is created
             RKLogInitialize();
+            if (!baseURL) {
+                self.reachabilityObserver = [RKReachabilityObserver reachabilityObserverForInternet];
+            }
         }
     }
     
