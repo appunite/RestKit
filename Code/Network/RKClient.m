@@ -305,6 +305,8 @@ NSString *RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPar
                 self.reachabilityObserver = [RKReachabilityObserver reachabilityObserverForInternet];
             }
         }
+    } else {
+        self.reachabilityObserver = [RKReachabilityObserver reachabilityObserverForInternet];
     }
 }
 
