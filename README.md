@@ -67,14 +67,19 @@ Installation
 Quick Start
 -----------
 
-1. git submodule add git@github.com:appunite/RestKit.git Frameworks/RestKit
-2. open Frameworks/RestKit/
-3. drag RestKit.xcodeproj to your project Frameworks group in Xcode
-4. click on your Project -> select target -> Build settings -> Other Linker Flags -> add "-ObjC"
-5. click on your Project -> select target -> Build settings -> Header Search Path -> add "$(SOURCE_ROOT)/Frameworks/RestKit/Build"
-6. click on your Project -> select target -> Build phases -> add "Target Dependences" -> select "RestKit"
-7. click on your Project -> select target -> Build phases -> add "Link Binary With Libraries"" -> select":
-    1. **CFNetwork.framework**
+RestKit assumes that you are using a modern Xcode project building to the DerivedData directory. Confirm your settings
+via the "File" menu > "Project Settings...". On the "Build" tab within the sheet that opens, click the "Advanced..."
+button and confirm that your "Build Location" is the "Derived Data Location".
+
+1. Add Git submodule to your project: `git submodule add git@github.com:appunite/RestKit.git Frameworks/RestKit`
+1. Add cross-project reference by dragging **RestKit.xcodeproj** to your project
+1. Open build settings editor for your project
+1. Add the following **Header Search Paths** (including the quotes): `"$(BUILT_PRODUCTS_DIR)/../../Headers"`
+1. Add **Other Linker Flags** for `-ObjC -all_load`
+1. Open target settings editor for the target you want to link RestKit into
+1. Add direct dependency on the **RestKit** aggregate target
+1. Link against required frameworks:
+    1. **CFNetwork.framework** on iOS
     1. **CoreData.framework**
     1. **MobileCoreServices.framework**
     1. **SystemConfiguration.framework**
@@ -84,6 +89,12 @@ Quick Start
     1. **libRestKitObjectMapping.a**
     1. **libRestKitNetwork.a**
     1. A JSON parser implementation (either **libRestKitJSONParserJSONKit.a**, **libRestKitJSONParserYAJL.a**, or **libRestKitJSONParserSBJSON.a**). We recommend JSONKit.
+    1. **QuartzCore.framework** on iOS
+1. Link against RestKit:
+    1. **libRestKit.a** on iOS
+    1. **RestKit.framework** on OS X
+1. Import the RestKit headers via `#import <RestKit/RestKit.h>`
+1. Build the project to verify installation is successful.
 
 Visual Install Guide
 -------------------------
@@ -94,6 +105,9 @@ Community Resources
 -------------------------
 
 A Google Group (high traffic) for development discussions and user support is available at: [http://groups.google.com/group/restkit](http://groups.google.com/group/restkit)
+
+The preferred venue for discussing bugs and feature requests is on Github Issues. The mailing list support traffic can be overwhelming
+for our small development team. Please file all bug reports and feature requests at: <https://github.com/RestKit/RestKit/issues>
 
 For users interested in low traffic updates about the library, an announcements list is also available:
 [http://groups.google.com/group/restkit-announce](http://groups.google.com/group/restkit-announce)
