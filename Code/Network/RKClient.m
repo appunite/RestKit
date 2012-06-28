@@ -111,7 +111,8 @@ NSString *RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPar
 }
 
 + (RKClient *)clientWithBaseURL:(NSURL *)baseURL {
-    RKClient *client = [[[self alloc] initWithBaseURL:baseURL] autorelease];
+#warning changed from autorelease to retain to fix rechabilityObservers problems with new client
+    RKClient *client = [[[self alloc] initWithBaseURL:baseURL] retain];
     return client;
 }
 
