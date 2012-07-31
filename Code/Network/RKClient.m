@@ -154,7 +154,7 @@ NSString *RKPathAppendQueryParams(NSString *resourcePath, NSDictionary *queryPar
     self = [self init];
     if (self) {
         self.cachePolicy = RKRequestCachePolicyDefault;
-        self.baseURL = [RKURL URLWithBaseURL:baseURL];
+        self.baseURL = (baseURL) ? [RKURL URLWithBaseURL:baseURL] : nil;
 
         if (sharedClient == nil) {
             [RKClient setSharedClient:self];
